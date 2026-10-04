@@ -52,4 +52,13 @@ $('logoutBtn').onclick=async()=>{await db.auth.signOut();currentUser=null;showAu
 $('productForm').onsubmit=async e=>{e.preventDefault();if(!db||!currentUser){$('formStatus').textContent='Please sign in to the configured admin database first.';return}const item={name:$('pName').value.trim(),price:Math.round(Number($('pPrice').value)),category:$('pCategory').value.trim()||'Other',image_url:$('pImage').value.trim()||null,description:$('pDescription').value.trim(),available:$('pStock').value==='true',featured:$('pFeatured').value==='true'};if(!item.name||!Number.isFinite(item.price)||item.price<0){$('formStatus').textContent='Enter a product name and valid price.';return}let result;if(editing){result=await db.from('products').update(item).eq('id',$('productId').value).select().single()}else{result=await db.from('products').insert(item).select().single()}if(result.error){$('formStatus').textContent='Save failed: '+result.error.message;return}if(editing)products=products.map(p=>String(p.id)===String(result.data.id)?result.data:p);else products.unshift(result.data);render();showManage();$('manageStatus').textContent='Product saved successfully.'};
 (async()=>{if(isConfigured()){db=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);const {data}=await db.auth.getSession();currentUser=data.session?.user||null;db.auth.onAuthStateChange((_event,session)=>{currentUser=session?.user||null})}await loadProducts()})();
 </script>
+ 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+// Your existing JavaScript code starts here
+const SUPABASE_URL = 'https://qsomhinslmogpirvmxqj.supabase.co';
+// Keep the rest of your existing code here
+ </script>
+ 
 </body></html>
